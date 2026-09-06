@@ -37,7 +37,7 @@
 body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var(--text-primary);min-height:100vh;}
 
 /* ── LOGIN ── */
-.login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--navy);z-index:1000;transition:opacity .3s;}
+.login-screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:var(--navy);z-index:1000;transition:opacity .3s;overflow-y:auto;padding:1rem;}
 .login-screen.hidden{opacity:0;pointer-events:none;}
 .login-card{background:var(--surface);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:var(--shadow-lg);border:1px solid var(--border);}
 .login-logo{display:block;width:64px;height:64px;border-radius:16px;margin:0 auto 1rem;object-fit:cover;}
@@ -194,9 +194,59 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 [data-theme="light"] #toast.info{background:#eff6ff;color:#2563eb;border-color:rgba(37,99,235,.3);}
 
 @media(max-width:600px){
+  /* Layout */
   .field-row{grid-template-columns:1fr;}
-  .content{padding:1rem;}
-  .topbar{padding:.65rem 1rem;}
+  .content{padding:.75rem;}
+  .topbar{padding:.55rem .75rem;gap:8px;}
+
+  /* Topbar brand — shrink on mobile */
+  .topbar-brand{font-size:.95rem !important;}
+  .topbar-brand .coimbatore{display:none;}
+
+  /* Hide Export label on mobile, show icon only */
+  .export-label{display:none;}
+
+  /* Mark Attendance button — compact */
+  .mark-att-label{display:none;}
+
+  /* Cards grid — single column */
+  .att-records-grid{grid-template-columns:1fr;}
+
+  /* Stat pills — 2 column grid */
+  #stat-pills{display:grid !important;grid-template-columns:1fr 1fr;gap:8px;}
+  #stat-pills > div{min-width:unset !important;}
+
+  /* Charts grid — single column */
+  #charts-grid{grid-template-columns:1fr !important;}
+
+  /* Mark attendance modal controls */
+  .mark-att-stats{flex-wrap:wrap;gap:8px;}
+  .mark-att-body{padding:.75rem 1rem;}
+
+  /* Login card padding */
+  .login-card{padding:2rem 1.25rem;}
+
+  /* User dropdown — full width on mobile */
+  .user-dropdown{right:-8px;min-width:180px;}
+
+  /* Quick add panel */
+  #quick-add-panel{padding:.75rem 1rem;}
+
+  /* Export menu */
+  #export-att-menu{min-width:160px;}
+
+  /* Record card action buttons — full width */
+  .att-record-card > div:last-child{justify-content:stretch;}
+  .att-record-card .action-btn{flex:1;text-align:center;}
+
+  /* Toast — bottom full width */
+  #toast{left:1rem;right:1rem;bottom:1rem;max-width:unset;}
+}
+
+@media(max-width:400px){
+  .topbar{padding:.5rem .6rem;}
+  #stat-pills{grid-template-columns:1fr;}
+  .login-card{padding:1.75rem 1rem;}
 }
 </style>
 </head>
@@ -230,13 +280,13 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 <div class="app" id="app">
   <!-- topbar -->
   <div class="topbar">
-    <div style="font-family:'Lora',serif;font-style:italic;font-weight:600;font-size:1.2rem;color:#c9922a;letter-spacing:.02em;flex-shrink:0;white-space:nowrap;">Kings Generation <span style="color:var(--text-primary);font-size:1rem;font-style:normal;font-weight:400;">- Coimbatore</span></div>
+    <div style="font-family:'Lora',serif;font-style:italic;font-weight:600;font-size:1.2rem;color:#c9922a;letter-spacing:.02em;flex-shrink:0;white-space:nowrap;">Kings Generation <span class="coimbatore" style="color:var(--text-primary);font-size:1rem;font-style:normal;font-weight:400;">- Coimbatore</span></div>
     <div class="topbar-spacer"></div>
     <!-- export dropdown -->
     <div class="export-wrap" style="position:relative;">
       <button class="top-btn" onclick="toggleExportAttMenu()">
         <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        Export
+        <span class="export-label">Export</span>
         <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
       <div id="export-att-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow-lg);z-index:200;min-width:180px;overflow:hidden;">
@@ -251,7 +301,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
     </div>
     <button class="top-btn primary" onclick="openMarkAttendance()">
       <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M6 8l2 2 4-4" stroke="#0D0F14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#0D0F14" stroke-width="1.6"/></svg>
-      Mark Attendance
+      <span class="mark-att-label">Mark Attendance</span>
     </button>
     <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
     <!-- user avatar -->
