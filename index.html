@@ -57,7 +57,22 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 
 /* ── APP ── */
 .app{display:none;flex-direction:column;min-height:100vh;}
-.topbar{display:flex;align-items:center;gap:12px;padding:.75rem 1.5rem;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar{display:flex;flex-direction:column;gap:0;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;}
+.topbar-row{display:flex;align-items:center;gap:10px;padding:.65rem 1.5rem;}
+.topbar-row-brand{border-bottom:none;}
+.topbar-row-actions{border-top:1px solid var(--border);padding:.5rem 1rem;}
+.topbar-brand{display:flex;flex-direction:column;line-height:1.2;flex:1;}
+.brand-kg{font-family:'Lora',serif;font-style:italic;font-weight:600;font-size:1.2rem;color:#c9922a;letter-spacing:.02em;white-space:nowrap;}
+.brand-city{font-size:.78rem;font-weight:400;color:var(--text-primary);margin-top:1px;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.mobile-actions{display:none;}
+.desktop-actions{display:flex;}
+@media(max-width:600px){
+  .topbar-row{padding:.6rem .85rem;}
+  .mobile-actions{display:flex;}
+  .desktop-actions{display:none;}
+  .topbar-row-brand{padding-bottom:.55rem;}
+}
 .topbar-title{font-size:1.1rem;font-weight:700;color:var(--text-primary);}
 .topbar-logo{width:36px;height:36px;border-radius:9px;object-fit:cover;}
 .topbar-logo-placeholder{width:36px;height:36px;border-radius:9px;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--gold);font-size:.85rem;}
@@ -279,46 +294,63 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
 <!-- ── APP ── -->
 <div class="app" id="app">
   <!-- topbar -->
-  <div class="topbar">
-    <div style="font-family:'Lora',serif;font-style:italic;font-weight:600;font-size:1.2rem;color:#c9922a;letter-spacing:.02em;flex-shrink:0;white-space:nowrap;">Kings Generation <span class="coimbatore" style="color:var(--text-primary);font-size:1rem;font-style:normal;font-weight:400;">- Coimbatore</span></div>
-    <div class="topbar-spacer"></div>
-    <!-- export dropdown -->
-    <div class="export-wrap" style="position:relative;">
-      <button class="top-btn" onclick="toggleExportAttMenu()">
-        <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        <span class="export-label">Export</span>
-        <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </button>
-      <div id="export-att-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow-lg);z-index:200;min-width:180px;overflow:hidden;">
-        <button onclick="openExportDateModal('city')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'">
-          <span style="font-size:.9rem;">🏙</span> City Church
-        </button>
-        <div style="border-top:1px solid var(--border);"></div>
-        <button onclick="openExportDateModal('airport')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'">
-          <span style="font-size:.9rem;">✈</span> Airport Church
-        </button>
+  <div class="topbar" id="main-topbar">
+    <!-- Row 1: brand -->
+    <div class="topbar-row topbar-row-brand">
+      <div class="topbar-brand">
+        <span class="brand-kg">Kings Generation</span>
+        <span class="brand-city">- Coimbatore</span>
       </div>
-    </div>
-    <button class="top-btn primary" onclick="openMarkAttendance()">
-      <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M6 8l2 2 4-4" stroke="#0D0F14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#0D0F14" stroke-width="1.6"/></svg>
-      <span class="mark-att-label">Mark Attendance</span>
-    </button>
-    <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
-    <!-- user avatar -->
-    <div class="user-avatar-wrap" id="user-avatar-wrap" style="display:none;">
-      <div class="user-avatar-btn" id="user-avatar-btn" onclick="toggleUserDropdown()"></div>
-      <div class="user-dropdown" id="user-dropdown">
-        <div class="user-dropdown-header">
-          <div class="user-dropdown-av" id="user-dropdown-av"></div>
-          <div>
-            <div class="user-dropdown-name" id="user-dropdown-name"></div>
-            <div class="user-dropdown-role" id="user-dropdown-role"></div>
+      <!-- actions always visible on desktop; hidden on mobile row 1 -->
+      <div class="topbar-actions desktop-actions">
+        <div class="export-wrap" style="position:relative;">
+          <button class="top-btn" onclick="toggleExportAttMenu()">
+            <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span class="export-label">Export</span>
+            <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div id="export-att-menu" style="display:none;position:absolute;top:calc(100% + 6px);right:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow-lg);z-index:200;min-width:180px;overflow:hidden;">
+            <button onclick="openExportDateModal('city')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'"><span style="font-size:.9rem;">🏙</span> City Church</button>
+            <div style="border-top:1px solid var(--border);"></div>
+            <button onclick="openExportDateModal('airport')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'"><span style="font-size:.9rem;">✈</span> Airport Church</button>
           </div>
         </div>
-        <button class="user-dropdown-item danger" onclick="handleLogout()">
-          <svg width="15" height="15" fill="none" viewBox="0 0 20 20"><path d="M7 19H3a1 1 0 01-1-1V2a1 1 0 011-1h4M13 15l5-5-5-5M18 10H7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Sign Out
+        <button class="top-btn primary" onclick="openMarkAttendance()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M6 8l2 2 4-4" stroke="#0D0F14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#0D0F14" stroke-width="1.6"/></svg>
+          <span class="mark-att-label">Mark Attendance</span>
         </button>
+        <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
+        <div class="user-avatar-wrap" id="user-avatar-wrap" style="display:none;">
+          <div class="user-avatar-btn" id="user-avatar-btn" onclick="toggleUserDropdown()"></div>
+          <div class="user-dropdown" id="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-av" id="user-dropdown-av"></div>
+              <div><div class="user-dropdown-name" id="user-dropdown-name"></div><div class="user-dropdown-role" id="user-dropdown-role"></div></div>
+            </div>
+            <button class="user-dropdown-item danger" onclick="handleLogout()">
+              <svg width="15" height="15" fill="none" viewBox="0 0 20 20"><path d="M7 19H3a1 1 0 01-1-1V2a1 1 0 011-1h4M13 15l5-5-5-5M18 10H7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Sign Out
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Row 2: mobile-only actions row -->
+    <div class="topbar-row topbar-row-actions mobile-actions">
+      <div class="export-wrap" style="position:relative;">
+        <button class="top-btn" onclick="toggleExportAttMenu()">
+          <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Export
+          <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+      <button class="top-btn primary" onclick="openMarkAttendance()" style="flex:1;justify-content:center;">
+        <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M6 8l2 2 4-4" stroke="#0D0F14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#0D0F14" stroke-width="1.6"/></svg>
+        Mark Attendance
+      </button>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
+      <div class="user-avatar-wrap" id="user-avatar-wrap-mobile" style="display:none;">
+        <div class="user-avatar-btn" id="user-avatar-btn-mobile" onclick="toggleUserDropdown()"></div>
       </div>
     </div>
   </div>
@@ -341,7 +373,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
       <!-- Grid: trend + right column -->
       <div id="charts-grid" style="display:grid;grid-template-columns:1fr 300px;gap:12px;">
         <!-- Trend -->
-        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;">
+        <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;overflow:hidden;min-width:0;">
           <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem;">
             <div>
               <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--slate-light);">Attendance Trend</div>
@@ -365,7 +397,7 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
             </div>
           </div>
           <!-- Monthly bar -->
-          <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;flex:1;">
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;flex:1;overflow:hidden;min-width:0;">
             <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:var(--slate-light);margin-bottom:.85rem;">Monthly Avg</div>
             <canvas id="monthly-canvas" height="100" style="width:100%;display:block;"></canvas>
           </div>
@@ -642,18 +674,22 @@ async function seedDefaults(){
 function applyUserAvatar(){
   const wrap=document.getElementById('user-avatar-wrap');
   const btn=document.getElementById('user-avatar-btn');
+  const wrapM=document.getElementById('user-avatar-wrap-mobile');
+  const btnM=document.getElementById('user-avatar-btn-mobile');
   const ddAv=document.getElementById('user-dropdown-av');
   const ddName=document.getElementById('user-dropdown-name');
   const ddRole=document.getElementById('user-dropdown-role');
-  if(!loggedInUser||!wrap){ if(wrap) wrap.style.display='none'; return; }
+  if(!loggedInUser){ if(wrap) wrap.style.display='none'; if(wrapM) wrapM.style.display='none'; return; }
   const rc=currentRole==='superadmin'?'sa':currentRole==='admin'?'ad':'ro';
   const rl=currentRole==='superadmin'?'Super Admin':currentRole==='admin'?'Admin':currentRole==='attendance'?'Attendance Only':'Read Only';
   const ini=(loggedInUser.display||loggedInUser.username).slice(0,2).toUpperCase();
-  btn.className='user-avatar-btn '+rc; btn.textContent=ini;
-  ddAv.className='user-dropdown-av '+rc; ddAv.textContent=ini;
-  ddName.textContent=loggedInUser.display||loggedInUser.username;
-  ddRole.textContent=rl;
-  wrap.style.display='block';
+  if(btn){ btn.className='user-avatar-btn '+rc; btn.textContent=ini; }
+  if(btnM){ btnM.className='user-avatar-btn '+rc; btnM.textContent=ini; }
+  if(ddAv){ ddAv.className='user-dropdown-av '+rc; ddAv.textContent=ini; }
+  if(ddName) ddName.textContent=loggedInUser.display||loggedInUser.username;
+  if(ddRole) ddRole.textContent=rl;
+  if(wrap) wrap.style.display='block';
+  if(wrapM) wrapM.style.display='block';
 }
 async function handleLogin(){
   const uname=document.getElementById('login-username').value.trim();
@@ -749,7 +785,7 @@ async function loadAttendanceRecords(){
   }catch(e){ console.error('Failed to load attendance records',e); }
 }
 
-function _maybeRenderCharts(){ if(typeof renderCharts==='function') renderCharts(); }
+function _maybeRenderCharts(){ if(typeof renderCharts==='function') requestAnimationFrame(()=>requestAnimationFrame(()=>renderCharts())); }
 function renderAttendanceRecords(){
   const grid=document.getElementById('att-records-grid');
   const countEl=document.getElementById('att-records-count');
@@ -781,7 +817,6 @@ function renderAttendanceRecords(){
       <div class="att-record-bar"><div class="att-record-bar-fill" style="width:${pct}%;background:${col}"></div></div>
       <div style="margin-top:8px;text-align:right;display:flex;gap:6px;justify-content:flex-end;">
         <button class="action-btn" style="font-size:.68rem;" onclick="editAttRecord('${r._docId}')">Edit</button>
-        <button class="action-btn" style="font-size:.68rem;color:var(--red)" onclick="deleteAttRecord('${r._docId}')">Remove</button>
       </div>
     </div>`;
   }).join(''):'<div style="grid-column:1/-1;text-align:center;padding:2rem;color:var(--slate-light);font-size:.82rem;">No records for this service type.</div>';
@@ -1226,25 +1261,32 @@ function renderCharts(){
 
   // responsive grid on small screens
   const grid = document.getElementById('charts-grid');
-  if(grid){ grid.style.gridTemplateColumns = window.innerWidth < 700 ? '1fr' : '1fr 300px'; }
+  if(grid){ grid.style.gridTemplateColumns = window.innerWidth < 700 ? '1fr' : '1fr 300px'; grid.style.minWidth='0'; }
 
   // ── Trend line chart ──
   const tCanvas = document.getElementById('trend-canvas');
   if(tCanvas){
     const dpr = window.devicePixelRatio||1;
-    const W = tCanvas.parentElement.clientWidth - 40;
-    tCanvas.width  = W * dpr;
+    const parentW = tCanvas.parentElement.getBoundingClientRect().width;
+    const padH = 40; // horizontal padding inside the card
+    const W = Math.max(120, parentW - padH);
+    tCanvas.style.width  = '100%';
+    tCanvas.style.maxWidth = W+'px';
+    tCanvas.style.display = 'block';
+    tCanvas.style.overflow = 'hidden';
+    const W2 = tCanvas.getBoundingClientRect().width || W;
+    tCanvas.width  = W2 * dpr;
     tCanvas.height = 150 * dpr;
-    tCanvas.style.width  = W+'px';
     tCanvas.style.height = '150px';
     const ctx = tCanvas.getContext('2d');
     ctx.scale(dpr,dpr);
+    const actualW = W2;
 
     // Use last 16 records with present>0, sorted oldest->newest
     const trend = sorted.slice(-16);
     const maxVal = Math.max(...trend.map(r=>r.presentCount||0), 10);
     const pad = { t:10, r:10, b:36, l:38 };
-    const cW = W - pad.l - pad.r;
+    const cW = actualW - pad.l - pad.r;
     const cH = 150 - pad.t - pad.b;
 
     // grid lines
@@ -1356,9 +1398,13 @@ function renderCharts(){
   const mCanvas = document.getElementById('monthly-canvas');
   if(mCanvas){
     const dpr = window.devicePixelRatio||1;
-    const W2 = mCanvas.parentElement.clientWidth - 40;
-    mCanvas.width=W2*dpr; mCanvas.height=100*dpr;
-    mCanvas.style.width=W2+'px'; mCanvas.style.height='100px';
+    const mParentW = mCanvas.parentElement.getBoundingClientRect().width;
+    const W2 = Math.max(80, mParentW - 40);
+    mCanvas.style.width='100%';
+    mCanvas.style.display='block';
+    const mActualW = mCanvas.getBoundingClientRect().width || W2;
+    mCanvas.width=mActualW*dpr; mCanvas.height=100*dpr;
+    mCanvas.style.height='100px';
     const mc=mCanvas.getContext('2d'); mc.scale(dpr,dpr);
 
     // Group by month
@@ -1374,7 +1420,7 @@ function renderCharts(){
     const avgs=months.map(k=>Math.round(monthMap[k].sum/monthMap[k].count));
     const maxA=Math.max(...avgs,1);
     const pad2={t:6,r:6,b:24,l:36};
-    const cW2=W2-pad2.l-pad2.r;
+    const cW2=mActualW-pad2.l-pad2.r;
     const cH2=100-pad2.t-pad2.b;
     const bw=Math.min(28,(cW2/months.length)-8);
 
@@ -1417,7 +1463,7 @@ function renderCharts(){
 window.renderCharts=renderCharts;
 
 // ── Boot ──
-window.addEventListener('resize', ()=>{ if(typeof renderCharts==='function') renderCharts(); });
+window.addEventListener('resize', ()=>{ if(typeof renderCharts==='function') requestAnimationFrame(renderCharts); });
 (async function(){
   await seedDefaults();
   if(await restoreSession()){
