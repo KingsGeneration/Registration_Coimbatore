@@ -301,6 +301,12 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
         <span class="brand-kg">Kings Generation</span>
         <span class="brand-city">- Coimbatore</span>
       </div>
+      <!-- mobile: avatar on row 1 -->
+      <div class="mobile-avatar-slot mobile-actions" style="margin-left:auto;">
+        <div class="user-avatar-wrap" id="user-avatar-wrap-mobile" style="display:none;">
+          <div class="user-avatar-btn" id="user-avatar-btn-mobile" onclick="toggleUserDropdown()"></div>
+        </div>
+      </div>
       <!-- actions always visible on desktop; hidden on mobile row 1 -->
       <div class="topbar-actions desktop-actions">
         <div class="export-wrap" style="position:relative;">
@@ -349,9 +355,6 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
         Mark Attendance
       </button>
       <button class="theme-btn" onclick="toggleTheme()" title="Toggle theme">☀</button>
-      <div class="user-avatar-wrap" id="user-avatar-wrap-mobile" style="display:none;">
-        <div class="user-avatar-btn" id="user-avatar-btn-mobile" onclick="toggleUserDropdown()"></div>
-      </div>
     </div>
   </div>
 
