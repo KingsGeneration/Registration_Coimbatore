@@ -305,6 +305,16 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
       <div class="mobile-avatar-slot mobile-actions" style="margin-left:auto;">
         <div class="user-avatar-wrap" id="user-avatar-wrap-mobile" style="display:none;">
           <div class="user-avatar-btn" id="user-avatar-btn-mobile" onclick="toggleUserDropdown()"></div>
+          <div class="user-dropdown" id="user-dropdown-mobile">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-av" id="user-dropdown-av-mobile"></div>
+              <div><div class="user-dropdown-name" id="user-dropdown-name-mobile"></div><div class="user-dropdown-role" id="user-dropdown-role-mobile"></div></div>
+            </div>
+            <button class="user-dropdown-item danger" onclick="handleLogout()">
+              <svg width="15" height="15" fill="none" viewBox="0 0 20 20"><path d="M7 19H3a1 1 0 01-1-1V2a1 1 0 011-1h4M13 15l5-5-5-5M18 10H7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Sign Out
+            </button>
+          </div>
         </div>
       </div>
       <!-- actions always visible on desktop; hidden on mobile row 1 -->
@@ -343,12 +353,17 @@ body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--navy);color:var
     </div>
     <!-- Row 2: mobile-only actions row -->
     <div class="topbar-row topbar-row-actions mobile-actions">
-      <div class="export-wrap" style="position:relative;">
+      <div class="export-wrap" id="export-wrap-mobile" style="position:relative;">
         <button class="top-btn" onclick="toggleExportAttMenu()">
           <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           Export
           <svg width="10" height="10" fill="none" viewBox="0 0 10 10"><path d="M2 3.5l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </button>
+        <div id="export-att-menu-mobile" style="display:none;position:absolute;top:calc(100% + 6px);left:0;background:var(--surface);border:1px solid var(--border-strong);border-radius:10px;box-shadow:var(--shadow-lg);z-index:200;min-width:180px;overflow:hidden;">
+          <button onclick="openExportDateModal('city')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'"><span style="font-size:.9rem;">🏙</span> City Church</button>
+          <div style="border-top:1px solid var(--border);"></div>
+          <button onclick="openExportDateModal('airport')" style="display:flex;align-items:center;gap:8px;width:100%;padding:.65rem 1rem;background:none;border:none;font-family:inherit;font-size:.83rem;font-weight:500;color:var(--text-primary);cursor:pointer;text-align:left;" onmouseover="this.style.background='var(--gold-pale)'" onmouseout="this.style.background='none'"><span style="font-size:.9rem;">✈</span> Airport Church</button>
+        </div>
       </div>
       <button class="top-btn primary" onclick="openMarkAttendance()" style="flex:1;justify-content:center;">
         <svg width="13" height="13" fill="none" viewBox="0 0 16 16"><path d="M6 8l2 2 4-4" stroke="#0D0F14" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><rect x="1" y="1" width="14" height="14" rx="2" stroke="#0D0F14" stroke-width="1.6"/></svg>
@@ -682,6 +697,10 @@ function applyUserAvatar(){
   const ddAv=document.getElementById('user-dropdown-av');
   const ddName=document.getElementById('user-dropdown-name');
   const ddRole=document.getElementById('user-dropdown-role');
+  // mobile dropdown elements
+  const ddAvM=document.getElementById('user-dropdown-av-mobile');
+  const ddNameM=document.getElementById('user-dropdown-name-mobile');
+  const ddRoleM=document.getElementById('user-dropdown-role-mobile');
   if(!loggedInUser){ if(wrap) wrap.style.display='none'; if(wrapM) wrapM.style.display='none'; return; }
   const rc=currentRole==='superadmin'?'sa':currentRole==='admin'?'ad':'ro';
   const rl=currentRole==='superadmin'?'Super Admin':currentRole==='admin'?'Admin':currentRole==='attendance'?'Attendance Only':'Read Only';
@@ -691,6 +710,9 @@ function applyUserAvatar(){
   if(ddAv){ ddAv.className='user-dropdown-av '+rc; ddAv.textContent=ini; }
   if(ddName) ddName.textContent=loggedInUser.display||loggedInUser.username;
   if(ddRole) ddRole.textContent=rl;
+  if(ddAvM){ ddAvM.className='user-dropdown-av '+rc; ddAvM.textContent=ini; }
+  if(ddNameM) ddNameM.textContent=loggedInUser.display||loggedInUser.username;
+  if(ddRoleM) ddRoleM.textContent=rl;
   if(wrap) wrap.style.display='block';
   if(wrapM) wrapM.style.display='block';
 }
@@ -722,8 +744,12 @@ function handleLogout(){
   document.getElementById('login-error').textContent='';
   const wrap=document.getElementById('user-avatar-wrap');
   if(wrap) wrap.style.display='none';
+  const wrapM=document.getElementById('user-avatar-wrap-mobile');
+  if(wrapM) wrapM.style.display='none';
   const dd=document.getElementById('user-dropdown');
   if(dd) dd.classList.remove('open');
+  const ddM=document.getElementById('user-dropdown-mobile');
+  if(ddM) ddM.classList.remove('open');
 }
 async function restoreSession(){
   try{
@@ -750,14 +776,36 @@ function toggleLoginPwd(){
   inp.type=inp.type==='password'?'text':'password';
 }
 function toggleUserDropdown(){
-  document.getElementById('user-dropdown').classList.toggle('open');
+  const dd=document.getElementById('user-dropdown');
+  const ddM=document.getElementById('user-dropdown-mobile');
+  // Toggle whichever is currently visible (mobile or desktop)
+  if(window.innerWidth<=600){
+    if(ddM) ddM.classList.toggle('open');
+  } else {
+    if(dd) dd.classList.toggle('open');
+  }
 }
 document.addEventListener('click',e=>{
+  // Desktop user dropdown close
   const wrap=document.getElementById('user-avatar-wrap');
-  if(wrap&&!wrap.contains(e.target)) document.getElementById('user-dropdown').classList.remove('open');
-  const expWrap=document.querySelector('.export-wrap');
-  const menu=document.getElementById('export-att-menu');
-  if(expWrap&&menu&&!expWrap.contains(e.target)) menu.style.display='none';
+  if(wrap&&!wrap.contains(e.target)){
+    const dd=document.getElementById('user-dropdown');
+    if(dd) dd.classList.remove('open');
+  }
+  // Mobile user dropdown close
+  const wrapM=document.getElementById('user-avatar-wrap-mobile');
+  if(wrapM&&!wrapM.contains(e.target)){
+    const ddM=document.getElementById('user-dropdown-mobile');
+    if(ddM) ddM.classList.remove('open');
+  }
+  // Desktop export menu close
+  const expWrapD=document.querySelector('.desktop-actions .export-wrap');
+  const menuD=document.getElementById('export-att-menu');
+  if(expWrapD&&menuD&&!expWrapD.contains(e.target)) menuD.style.display='none';
+  // Mobile export menu close
+  const expWrapM=document.getElementById('export-wrap-mobile');
+  const menuM=document.getElementById('export-att-menu-mobile');
+  if(expWrapM&&menuM&&!expWrapM.contains(e.target)) menuM.style.display='none';
 });
 
 // ── Validated IDs — real-time sync from main portal ──
@@ -1098,7 +1146,17 @@ async function saveAttendanceRecord(auto=false){
 }
 
 // ── Export ──
-function toggleExportAttMenu(){ const m=document.getElementById('export-att-menu'); if(!m) return; m.style.display=m.style.display==='block'?'none':'block'; }
+function toggleExportAttMenu(){
+  if(window.innerWidth<=600){
+    const m=document.getElementById('export-att-menu-mobile');
+    if(!m) return;
+    m.style.display=m.style.display==='block'?'none':'block';
+  } else {
+    const m=document.getElementById('export-att-menu');
+    if(!m) return;
+    m.style.display=m.style.display==='block'?'none':'block';
+  }
+}
 function openExportDateModal(venueFilter){
   _exportVenue=venueFilter;
   const title=venueFilter==='city'?'🏙 City Church Export':'✈ Airport Church Export';
@@ -1109,6 +1167,7 @@ function openExportDateModal(venueFilter){
   _updateExportInfo();
   document.getElementById('export-date-overlay').style.display='flex';
   document.getElementById('export-att-menu').style.display='none';
+  const mM=document.getElementById('export-att-menu-mobile'); if(mM) mM.style.display='none';
 }
 function closeExportDateModal(){ document.getElementById('export-date-overlay').style.display='none'; }
 function _buildExportDateList(){
